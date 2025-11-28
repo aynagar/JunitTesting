@@ -1,24 +1,39 @@
 package org.junit.junit;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
-class SomeBussinessImplTest {
+@ExtendWith(MockitoExtension.class)
+class SomeBussinessImplMockTest {
+
+    @Mock
+    private SomeBussinessImpl.DataService dataService;
+
+    @InjectMocks
+    private SomeBussinessImpl someBussinessImpl;
+
     @Test
     void findTheGreatestFromAllData_scenario() {
-        DataServiceStub dataServiceStub = new DataServiceStub();
-        SomeBussinessImpl BussinessImpl = new SomeBussinessImpl(dataServiceStub);
-      int result =  BussinessImpl.findTheGreatestFromAllData();
-      assertEquals(25, result);
+        when(dataService.retrieveAllData()).thenReturn(new int[]{25, 15, 5});
+        assertEquals(25, someBussinessImpl.findTheGreatestFromAllData());
     }
-}
-class DataServiceStub implements SomeBussinessImpl.DataService {
-    @Override
-    public int[] retrieveAllData() {
-        return new int[] {25,15,5};
+
+    @Test
+    void findTheGreatestFromAllData_OneValue() {
+        when(dataService.retrieveAllData()).thenReturn(new int[]{25});
+        assertEquals(25, someBussinessImpl.findTheGreatestFromAllData());
     }
+
+    @Test
+    void findTheGreatestFromAllData_Novalue() {
+        when(dataService.retrieveAllData()).thenReturn(new int[]{0});
+        assertEquals(0, someBussinessImpl.findTheGreatestFromAllData());
+    }
+
 }
-
-
-
